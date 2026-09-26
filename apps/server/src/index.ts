@@ -1,6 +1,6 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import compression from 'compression';
 import { initDatabase, closeDatabase } from './db';
 import { authMiddleware } from './auth';
@@ -18,10 +18,10 @@ import transactionRoutes from './routes/transactions';
 import walletRoutes from './routes/wallet';
 import adminRoutes from './routes/admin';
 
-dotenv.config();
 const app = express();
 const port = Number(process.env.PORT || 4000);
 
+app.set('trust proxy', 1);
 app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
 setupSecurity(app);
 app.use(compression());
@@ -29,7 +29,7 @@ app.use(setCacheHeaders);
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
-app.get('/api/health', (_req, res) => res.json({ status: 'ok', service: 'solve-ai-server' }));
+app.get('/api/health', (_req, res) => res.status(200).json({ status: 'ok', service: 'solve-ai-server' }));
 app.use('/api/auth', authLimiter);
 app.use('/api', apiLimiter);
 authMiddleware(app);
@@ -54,10 +54,16 @@ app.use((error: unknown, _req: express.Request, res: express.Response, _next: ex
 
 async function start() {
   await initDatabase();
-  const server = app.listen(port, () => console.log(`Solve AI server listening on port ${port}`));
-  const shutdown = async () => { server.close(); await closeDatabase(); process.exit(0); };
-  process.on('SIGTERM', shutdown);
-  process.on('SIGINT', shutdown);
+  const server = app.listen(port, '0.0.0.0', () => {
+    console.log(`Solve AI server listening on port ${port}`);
+  });
+  const shutdown = async () => {
+    server.close();
+    await closeDatabase();
+    process.exit(0);
+  };
+  process.once('SIGTERM', shutdown);
+  process.once('SIGINT', shutdown);
 }
 
 start().catch((error) => {
