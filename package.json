@@ -10,6 +10,7 @@
     "dev:server": "npm --workspace apps/server run dev",
     "build": "npm --workspace apps/web run build && npm --workspace apps/server run build",
     "start:web": "npm --workspace apps/web run preview -- --host 0.0.0.0",
-    "start:server": "npm --workspace apps/server run start"
+    "start:server": "npm --workspace apps/server run start",
+    "install:all": "npm install"
   }
 }

@@ -1,34 +1,35 @@
 # Solve AI App
 
-A modern accounting and business management platform powered by AI, with multilingual support in Arabic, English, and French.
+Solve AI App is a modern AI-powered accounting and business management platform for SMEs and growing companies. It combines financial operations, reporting, multilingual support, and subscription management in a single SaaS-ready product.
 
-## Features
-- Smart accounting dashboard
-- Invoice, bills, customer, and supplier management
-- AI-generated financial insights and recommendations
-- Multilingual interface (Arabic / English / French)
-- Subscription plans: Monthly, Semi-Annual, Annual
-- Modern responsive UI
-- Ready for expansion with backend APIs and database integration
+## Core features
+- AI-powered accounting dashboard and insights
+- Multi-language support in Arabic, English, and French
+- Subscription plans: Monthly, Semi-Annual, and Annual
+- Customer, supplier, invoice, and transaction management
+- Financial summaries, forecasting, and reports
+- Role-based access and secure authentication model
+- Responsive and modern professional UI
 
-## Project structure
+## Stack
+- Frontend: React + Vite + TypeScript
+- Backend: Node.js + Express + TypeScript
+- API layer: REST with mock data for MVP
+- Styling: Custom CSS
+
+## Repository structure
 
 ```text
-solve-ai-app/
+Solve-AI-App/
 ├── apps/
 │   ├── web/
 │   └── server/
 ├── package.json
-├── README.md
 ├── .gitignore
-└── .env.example
+├── .env.example
+├── README.md
+└── LICENSE
 ```
-
-## Tech stack
-- Frontend: React + Vite + TypeScript
-- Backend: Node.js + Express + TypeScript
-- Styling: CSS Modules / custom CSS
-- App shell: multilingual UI ready for production growth
 
 ## Quick start
 
@@ -38,27 +39,34 @@ solve-ai-app/
 npm install
 ```
 
-2. Run the backend:
+2. Start the backend:
 
 ```bash
 npm run dev:server
 ```
 
-3. Run the frontend:
+3. Start the frontend:
 
 ```bash
 npm run dev:web
 ```
 
-4. Open the app in your browser:
+4. Open the app:
 - Frontend: http://localhost:5173
 - Backend: http://localhost:4000
 
-## API endpoints
-
+## API overview
 - `GET /api/health`
-- `GET /api/summary`
+- `GET /api/dashboard`
 - `GET /api/plans`
+- `GET /api/invoices`
+- `GET /api/customers`
+- `POST /api/auth/login`
+- `POST /api/auth/register`
+- `POST /api/ai/analyze`
+
+## MVP status
+This repository currently contains a production-style MVP foundation for the product, including the UI shell, backend API, multilingual sections, and subscription model. It is ready for extension toward a full accounting SaaS product.
 
 ## License
 MIT

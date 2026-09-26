@@ -1,8 +1,7 @@
 :root {
   font-family: Inter, 'Segoe UI', sans-serif;
   line-height: 1.5;
-  font-weight: 400;
-  color: #e8eefc;
+  color: #edf4ff;
   background: #07111f;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -20,15 +19,13 @@ html {
 
 body {
   margin: 0;
-  min-width: 320px;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top, rgba(63, 113, 255, 0.25), transparent 30%),
-    linear-gradient(135deg, #07111f 0%, #101e32 100%);
+  background: radial-gradient(circle at top, rgba(91, 146, 255, 0.22), transparent 30%), linear-gradient(135deg, #07111f 0%, #101d2c 100%);
 }
 
 button,
-select {
+select,
+textarea {
   font: inherit;
 }
 
@@ -41,9 +38,9 @@ button {
 }
 
 .app-shell {
-  max-width: 1200px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 24px 20px 80px;
+  padding: 28px 20px 80px;
 }
 
 .topbar {
@@ -51,53 +48,53 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 18px 22px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(9,17,29,0.78);
   border-radius: 18px;
-  background: rgba(8, 17, 31, 0.7);
-  backdrop-filter: blur(16px);
+  padding: 18px 22px;
+  backdrop-filter: blur(18px);
 }
 
-.brand-block {
+.brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-weight: 700;
+  font-weight: 800;
 }
 
-.brand-dot {
-  width: 32px;
-  height: 32px;
+.brand-mark {
   display: grid;
   place-items: center;
+  width: 34px;
+  height: 34px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #6ab4ff, #7d7dff);
+  background: linear-gradient(135deg, #5ea6ff, #7a7cf7);
   color: white;
-  font-weight: 800;
 }
 
 .nav {
   display: flex;
-  gap: 22px;
+  gap: 18px;
+  flex-wrap: wrap;
 }
 
 .nav a {
-  color: rgba(232, 238, 252, 0.85);
   text-decoration: none;
+  color: rgba(237, 244, 255, 0.8);
 }
 
-.actions {
+.header-actions {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.actions select {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(14, 21, 39, 0.9);
-  color: #edf3ff;
+.header-actions select {
+  color: white;
+  background: #0c1727;
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 12px;
-  padding: 10px 14px;
+  padding: 10px 12px;
 }
 
 .primary-btn,
@@ -105,8 +102,7 @@ button {
   border: none;
   border-radius: 12px;
   padding: 11px 18px;
-  font-weight: 600;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  font-weight: 700;
 }
 
 .primary-btn {
@@ -115,143 +111,224 @@ button {
 }
 
 .secondary-btn {
-  background: rgba(255, 255, 255, 0.06);
-  color: #e9efff;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.primary-btn:hover,
-.secondary-btn:hover {
-  transform: translateY(-1px);
+  background: rgba(255,255,255,0.06);
+  color: #edf4ff;
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 .hero {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 28px;
-  padding-top: 44px;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
   align-items: center;
-}
-
-.hero-copy {
-  max-width: 650px;
+  padding-top: 52px;
 }
 
 .eyebrow {
   display: inline-block;
-  padding: 7px 12px;
-  border-radius: 999px;
-  background: rgba(94, 166, 255, 0.12);
   color: #8cc3ff;
+  background: rgba(94,166,255,0.08);
+  border: 1px solid rgba(94,166,255,0.18);
+  border-radius: 999px;
+  padding: 7px 12px;
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .hero-copy h1 {
-  margin: 18px 0 14px;
-  font-size: clamp(2.8rem, 5vw, 4.5rem);
-  line-height: 1.06;
+  margin: 18px 0 10px;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 1.05;
 }
 
 .hero-copy p {
   margin: 0;
-  color: rgba(219, 228, 246, 0.8);
+  color: rgba(237,244,255,0.8);
   font-size: 1.1rem;
-  max-width: 560px;
+  max-width: 620px;
 }
 
 .cta-row {
   display: flex;
+  align-items: center;
   gap: 14px;
   margin-top: 28px;
 }
 
-.hero-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.mini-card,
-.stat-card,
+.hero-card,
+.panel-card,
+.summary-card,
+.info-card,
 .plan-card,
-.insight-panel {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(8, 16, 27, 0.75);
+.table-wrap {
+  background: rgba(9,17,29,0.78);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 18px;
-  box-shadow: 0 20px 45px rgba(7, 11, 18, 0.25);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.18);
 }
 
-.mini-card {
-  padding: 20px;
+.hero-card {
+  padding: 22px;
 }
 
-.highlight {
-  background: linear-gradient(135deg, rgba(88, 134, 255, 0.2), rgba(98, 232, 178, 0.12));
-}
-
-.mini-card span,
-.stat-card span {
-  display: block;
-  color: rgba(219, 228, 246, 0.7);
-  margin-bottom: 6px;
-}
-
-.mini-card strong,
-.stat-card strong {
-  font-size: clamp(1.4rem, 2.5vw, 2.3rem);
-  font-weight: 800;
-}
-
-.mini-grid,
-.stats-grid,
+.kpi-grid,
+.summary-grid,
+.cards-grid,
 .pricing-grid {
   display: grid;
   gap: 16px;
 }
 
-.mini-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.kpi-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.stats-block,
-.pricing-block {
+.stat-box {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.stat-box.accent {
+  background: linear-gradient(135deg, rgba(94,166,255,0.18), rgba(122,124,247,0.12));
+}
+
+.stat-box span,
+.summary-card span,
+.info-card p,
+.list span,
+.ai-output {
+  display: block;
+  color: rgba(237,244,255,0.7);
+}
+
+.stat-box strong,
+.summary-card strong,
+.info-card strong {
+  display: block;
+  margin-top: 8px;
+  font-size: clamp(1.4rem, 2vw, 2.2rem);
+}
+
+.section-block {
   margin-top: 54px;
 }
 
-.stats-block h2,
-.pricing-block h2 {
+.section-heading {
   margin-bottom: 18px;
-  font-size: clamp(1.8rem, 3vw, 2.8rem);
 }
 
-.stats-grid {
+.section-heading h2 {
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
+  margin: 0;
+}
+
+.summary-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.stat-card {
-  padding: 20px;
+.summary-card {
+  padding: 22px 18px;
 }
 
-.insight-panel {
-  margin-top: 54px;
-  padding: 28px 24px;
+.double {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 18px;
 }
 
-.insight-panel h3 {
-  margin: 12px 0 8px;
-  font-size: clamp(1.8rem, 2.5vw, 2.7rem);
+.panel-card {
+  padding: 24px;
 }
 
-.insight-panel p,
-.insight-panel li {
-  color: rgba(219, 228, 246, 0.8);
+.mini-header h3 {
+  margin: 0;
+  font-size: 1.6rem;
 }
 
-.insight-panel ul {
-  padding-left: 18px;
+.panel-card p {
+  color: rgba(237,244,255,0.8);
+}
+
+.ai-box {
+  margin-top: 18px;
+}
+
+.ai-box textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 120px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.02);
+  color: white;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.ai-output {
+  margin-top: 16px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
   margin: 18px 0 0;
+}
+
+.list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+th {
+  color: rgba(237,244,255,0.7);
+  font-weight: 600;
+}
+
+.cards-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.info-card {
+  padding: 22px 18px;
+}
+
+.info-card h4 {
+  margin: 0 0 6px;
+  font-size: 1.2rem;
+}
+
+.info-card span {
+  display: inline-block;
+  margin-top: 12px;
+  color: #8cc3ff;
 }
 
 .pricing-grid {
@@ -264,87 +341,76 @@ button {
 }
 
 .plan-card.popular {
-  border-color: rgba(122, 124, 247, 0.82);
-  background: linear-gradient(180deg, rgba(26, 31, 55, 0.8), rgba(10, 18, 35, 0.9));
+  border-color: rgba(122,124,247,0.7);
+  background: linear-gradient(180deg, rgba(15,22,38,0.9), rgba(9,17,29,0.82));
 }
 
 .badge {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 14px;
+  right: 14px;
+  background: rgba(122,124,247,0.14);
+  color: #c4c9ff;
   padding: 5px 9px;
   border-radius: 999px;
   font-size: 11px;
-  background: rgba(122, 124, 247, 0.18);
-  color: #c7c9ff;
 }
 
 .plan-card h3 {
-  margin-top: 0;
-  margin-bottom: 12px;
-  font-size: 1.5rem;
+  margin: 0 0 12px;
+  font-size: 1.6rem;
 }
 
 .price {
   font-size: 2rem;
   font-weight: 800;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .plan-card p {
-  color: rgba(219, 228, 246, 0.75);
+  color: rgba(237,244,255,0.75);
 }
 
 .plan-card ul {
   padding-left: 18px;
+  color: rgba(237,244,255,0.9);
   margin: 18px 0 22px;
-  color: rgba(217, 226, 248, 0.9);
 }
 
 @media (max-width: 920px) {
   .topbar,
-  .nav,
-  .actions,
   .hero,
-  .stats-grid,
-  .pricing-grid {
+  .double,
+  .summary-grid,
+  .pricing-grid,
+  .cards-grid {
     grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .topbar {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .nav,
-  .actions,
-  .cta-row {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .hero {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .stats-grid,
-  .pricing-grid,
-  .mini-grid {
-    grid-template-columns: 1fr 1fr;
+  .header-actions,
+  .cta-row,
+  .nav {
+    flex-wrap: wrap;
   }
 }
 
 @media (max-width: 620px) {
-  .stats-grid,
-  .pricing-grid,
-  .mini-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .topbar {
-    padding: 16px;
-  }
-
   .app-shell {
     padding-left: 14px;
     padding-right: 14px;
+  }
+
+  .kpi-grid,
+  .summary-grid,
+  .cards-grid,
+  .pricing-grid {
+    grid-template-columns: 1fr;
   }
 }
