@@ -19,6 +19,8 @@ import reportRoutes from './routes/reports';
 import paymentRoutes from './routes/payment';
 import transactionRoutes from './routes/transactions';
 import walletRoutes from './routes/wallet';
+import adminRoutes from './routes/admin';
+import systemRoutes from './routes/system';
 
 dotenv.config();
 
@@ -34,14 +36,24 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(mongoSanitize());
 
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', service: 'solve-ai-server', version: '1.1.0', uptime: process.uptime() });
+  res.json({ 
+    status: 'ok', 
+    service: 'solve-ai-server', 
+    version: '1.2.0',
+    owner: 'almoizaledrisi@gmail.com',
+    uptime: process.uptime() 
+  });
 });
 
 app.use('/api/auth', authLimiter);
 app.use('/api/', apiLimiter);
 authMiddleware(app);
 
+// Public routes
 app.use('/api/auth', authRoutes);
+app.use('/api/wallet', walletRoutes);
+
+// Protected routes
 app.use('/api/customers', customerRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/dashboard', dashboardRoutes);
@@ -50,7 +62,10 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/transactions', transactionRoutes);
-app.use('/api/wallet', walletRoutes);
+
+// Admin only routes
+app.use('/api/admin', adminRoutes);
+app.use('/api/system', systemRoutes);
 
 app.use((_req, res) => res.status(404).json({ message: 'Not found' }));
 app.use((err: any, _req: express.Request, res: express.Response) => {
@@ -61,13 +76,19 @@ app.use((err: any, _req: express.Request, res: express.Response) => {
 async function start() {
   try {
     await initDatabase();
-    app.listen(port, () => console.log(`Solve AI server running on http://localhost:${port}`));
+    console.log('✓ Database initialized');
+    app.listen(port, () => {
+      console.log(`✓ Solve AI server running on http://localhost:${port}`);
+      console.log(`✓ Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`✓ Admin panel: /admin`);
+    });
     process.on('SIGTERM', async () => {
+      console.log('SIGTERM received, closing...');
       await closeDatabase();
       process.exit(0);
     });
   } catch (error) {
-    console.error('Failed to start server:', error);
+    console.error('✗ Failed to start server:', error);
     process.exit(1);
   }
 }
