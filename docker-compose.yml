@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: solve-ai-db
+    environment:
+      POSTGRES_USER: solve_ai_user
+      POSTGRES_PASSWORD: solve_ai_password_123
+      POSTGRES_DB: solve_ai_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - solve-ai-network
+
+  server:
+    build:
+      context: ./apps/server
+      dockerfile: Dockerfile
+    container_name: solve-ai-server
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://solve_ai_user:solve_ai_password_123@postgres:5432/solve_ai_db
+      JWT_SECRET: your-secret-key-change-in-production
+      PORT: 4000
+      CLIENT_URL: http://localhost:5173
+    ports:
+      - '4000:4000'
+    networks:
+      - solve-ai-network
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: solve-ai-web
+    ports:
+      - '5173:5173'
+    environment:
+      VITE_API_URL: http://localhost:4000
+    networks:
+      - solve-ai-network
+
+volumes:
+  postgres_data:
+
+networks:
+  solve-ai-network:
+    driver: bridge

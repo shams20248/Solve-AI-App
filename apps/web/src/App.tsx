@@ -2,21 +2,40 @@ import { useEffect, useMemo, useState } from 'react';
 
 type Language = 'ar' | 'en' | 'fr';
 
+type User = {
+  id: number;
+  email: string;
+  name: string;
+  role: string;
+  plan: string;
+};
+
 type DashboardData = {
-  kpis: {
-    revenue: string;
-    expenses: string;
-    netProfit: string;
-    activeClients: number;
-    aiInsights: number;
-    invoicesPaid: number;
-  };
-  summary: {
-    cashFlow: string;
-    burnRate: string;
-    overdueInvoices: number;
-    forecast: string;
-  };
+  totalRevenue: number;
+  totalExpenses: number;
+  netProfit: number;
+  activeClients: number;
+  pendingInvoices: number;
+  paidInvoices: number;
+};
+
+type Invoice = {
+  id: number;
+  invoice_number: string;
+  customer_name: string;
+  amount: number;
+  status: string;
+  due_date: string;
+};
+
+type Customer = {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  type: string;
+  balance: number;
+  status: string;
 };
 
 type Plan = {
@@ -27,33 +46,13 @@ type Plan = {
   popular?: boolean;
 };
 
-type Invoice = {
-  id: string;
-  client: string;
-  value: string;
-  status: string;
-  due: string;
-};
-
-type Customer = {
-  name: string;
-  type: string;
-  balance: string;
-  status: string;
-};
-
-type Report = {
-  title: string;
-  value: string;
-};
-
 const translations = {
   ar: {
     brand: 'Solve AI',
     nav: ['لوحة التحكم', 'الفواتير', 'العملاء', 'التقارير', 'الاشتراكات'],
-    tagline: 'منظومة محاسبة ذكية تدعم الشركة في كل قرار مالي.',
+    tagline: 'منظومة محاسبة ذكية تدعم كل قرار مالي',
     start: 'ابدأ الآن',
-    demo: 'عرض تجريبي',
+    demo: 'عرض توضيحي',
     revenue: 'الإيرادات',
     expenses: 'المصاريف',
     netProfit: 'صافي الربح',
@@ -61,23 +60,22 @@ const translations = {
     invoicesPaid: 'الفواتير المسددة',
     aiInsights: 'تحليلات الذكاء الاصطناعي',
     overview: 'نظرة عامة',
-    aiTitle: 'أداء الذكاء الاصطناعي',
-    aiDesc: 'تتبع التدفقات النقدية، تنبؤات الإيرادات، وتحذيرات الأنشطة غير الاعتيادية.',
-    invoices: 'الفواتير',
-    customers: 'العملاء',
-    reports: 'التقارير',
-    plans: 'الاشتراكات',
     login: 'تسجيل الدخول',
     register: 'إنشاء حساب',
-    askAi: 'اسأل الذكاء الاصطناعي',
-    choosePlan: 'اختر الخطة',
-    demoAI: 'تحليل مالي ذكي',
-    noData: 'لا توجد بيانات حالياً.'
+    logout: 'تسجيل الخروج',
+    email: 'البريد الإلكتروني',
+    password: 'كلمة المرور',
+    name: 'الاسم',
+    company: 'اسم الشركة',
+    invoices: 'الفواتير',
+    customers: 'العملاء',
+    plans: 'الاشتراكات',
+    noData: 'لا توجد بيانات حالياً'
   },
   en: {
     brand: 'Solve AI',
     nav: ['Dashboard', 'Invoices', 'Customers', 'Reports', 'Plans'],
-    tagline: 'Smart accounting software that supports every financial decision.',
+    tagline: 'Smart accounting software that supports every financial decision',
     start: 'Get started',
     demo: 'Book demo',
     revenue: 'Revenue',
@@ -87,23 +85,22 @@ const translations = {
     invoicesPaid: 'Invoices paid',
     aiInsights: 'AI insights',
     overview: 'Overview',
-    aiTitle: 'AI performance',
-    aiDesc: 'Cash flow monitoring, revenue predictions, and alerts for unusual activity.',
-    invoices: 'Invoices',
-    customers: 'Customers',
-    reports: 'Reports',
-    plans: 'Plans',
     login: 'Login',
     register: 'Register',
-    askAi: 'Ask the AI',
-    choosePlan: 'Choose plan',
-    demoAI: 'Smart financial analysis',
-    noData: 'No data available yet.'
+    logout: 'Logout',
+    email: 'Email',
+    password: 'Password',
+    name: 'Name',
+    company: 'Company name',
+    invoices: 'Invoices',
+    customers: 'Customers',
+    plans: 'Plans',
+    noData: 'No data available'
   },
   fr: {
     brand: 'Solve AI',
     nav: ['Tableau', 'Factures', 'Clients', 'Rapports', 'Abonnements'],
-    tagline: 'Logiciel de comptabilité intelligent pour chaque décision financière.',
+    tagline: 'Logiciel de comptabilité intelligent pour chaque décision financière',
     start: 'Commencer',
     demo: 'Démo',
     revenue: 'Revenu',
@@ -112,19 +109,18 @@ const translations = {
     activeClients: 'Clients actifs',
     invoicesPaid: 'Factures payées',
     aiInsights: 'Analyses IA',
-    overview: 'Vue d’ensemble',
-    aiTitle: 'Performance IA',
-    aiDesc: 'Suivi de trésorerie, prévisions de revenus et alertes sur les activités inhabituelles.',
-    invoices: 'Factures',
-    customers: 'Clients',
-    reports: 'Rapports',
-    plans: 'Abonnements',
+    overview: 'Vue d\'ensemble',
     login: 'Connexion',
     register: 'Créer un compte',
-    askAi: 'Demander à l’IA',
-    choosePlan: 'Choisir le plan',
-    demoAI: 'Analyse financière intelligente',
-    noData: 'Aucune donnée disponible pour le moment.'
+    logout: 'Déconnexion',
+    email: 'E-mail',
+    password: 'Mot de passe',
+    name: 'Nom',
+    company: 'Nom de l\'entreprise',
+    invoices: 'Factures',
+    customers: 'Clients',
+    plans: 'Abonnements',
+    noData: 'Aucune donnée disponible'
   }
 } as const;
 
@@ -134,63 +130,138 @@ const languageLabels: Record<Language, string> = {
   fr: 'Français'
 };
 
+const API_URL = 'http://localhost:4000';
+
 export default function App() {
   const [language, setLanguage] = useState<Language>('en');
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(localStorage.getItem('auth_token'));
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
-  const [plans, setPlans] = useState<Plan[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [reports, setReports] = useState<Report[]>([]);
-  const [aiResponse, setAiResponse] = useState<string>('');
-  const [query, setQuery] = useState('What should we improve in our cash flow this month?');
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const [dashboardRes, plansRes, invoicesRes, customersRes, reportsRes] = await Promise.all([
-          fetch('http://localhost:4000/api/dashboard'),
-          fetch('http://localhost:4000/api/plans'),
-          fetch('http://localhost:4000/api/invoices'),
-          fetch('http://localhost:4000/api/customers'),
-          fetch('http://localhost:4000/api/reports')
-        ]);
-
-        const dashboardData = await dashboardRes.json();
-        const plansData = await plansRes.json();
-        const invoicesData = await invoicesRes.json();
-        const customersData = await customersRes.json();
-        const reportsData = await reportsRes.json();
-
-        setDashboard(dashboardData);
-        setPlans(plansData);
-        setInvoices(invoicesData);
-        setCustomers(customersData);
-        setReports(reportsData);
-      } catch (error) {
-        console.error('Data load failed:', error);
-      }
-    };
-
-    void load();
-  }, []);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [showLoginForm, setShowLoginForm] = useState(!token);
+  const [showRegisterForm, setShowRegisterForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const t = useMemo(() => translations[language], [language]);
 
-  const askAi = async () => {
-    try {
-      const res = await fetch('http://localhost:4000/api/ai/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: query })
-      });
+  useEffect(() => {
+    if (token) {
+      loadUserData();
+    }
+  }, [token]);
 
-      const data = await res.json();
-      setAiResponse(data.summary + ' ' + data.recommendations.join(' '));
+  const loadUserData = async () => {
+    try {
+      const headers = { Authorization: `Bearer ${token}` };
+
+      const [userRes, dashboardRes, invoicesRes, customersRes, plansRes] = await Promise.all([
+        fetch(`${API_URL}/api/auth/me`, { headers }),
+        fetch(`${API_URL}/api/dashboard/summary`, { headers }),
+        fetch(`${API_URL}/api/invoices`, { headers }),
+        fetch(`${API_URL}/api/customers`, { headers }),
+        fetch(`${API_URL}/api/subscriptions/plans`, { headers })
+      ]);
+
+      if (userRes.ok) {
+        const userData = await userRes.json();
+        setUser(userData);
+      }
+
+      if (dashboardRes.ok) {
+        const dashboardData = await dashboardRes.json();
+        setDashboard(dashboardData);
+      }
+
+      if (invoicesRes.ok) {
+        const invoicesData = await invoicesRes.json();
+        setInvoices(invoicesData);
+      }
+
+      if (customersRes.ok) {
+        const customersData = await customersRes.json();
+        setCustomers(customersData);
+      }
+
+      if (plansRes.ok) {
+        const plansData = await plansRes.json();
+        setPlans(plansData);
+      }
     } catch (error) {
-      console.error('AI request failed:', error);
-      setAiResponse('AI service is not available right now.');
+      console.error('Data load error:', error);
+      setError('Failed to load data');
     }
   };
+
+  const handleLogin = async (email: string, password: string) => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (!res.ok) {
+        throw new Error('Invalid credentials');
+      }
+
+      const data = await res.json();
+      localStorage.setItem('auth_token', data.token);
+      setToken(data.token);
+      setUser(data.user);
+      setShowLoginForm(false);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async (name: string, email: string, password: string, companyName: string) => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, companyName })
+      });
+
+      if (!res.ok) {
+        throw new Error('Registration failed');
+      }
+
+      const data = await res.json();
+      localStorage.setItem('auth_token', data.token);
+      setToken(data.token);
+      setUser(data.user);
+      setShowRegisterForm(false);
+      setShowLoginForm(false);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('auth_token');
+    setToken(null);
+    setUser(null);
+    setShowLoginForm(true);
+  };
+
+  if (showLoginForm && !user) {
+    return <LoginForm t={t} onLogin={handleLogin} onSwitch={() => { setShowLoginForm(false); setShowRegisterForm(true); }} loading={loading} error={error} lang={language} setLang={setLanguage} languageLabels={languageLabels} />;
+  }
+
+  if (showRegisterForm && !user) {
+    return <RegisterForm t={t} onRegister={handleRegister} onSwitch={() => { setShowRegisterForm(false); setShowLoginForm(true); }} loading={loading} error={error} lang={language} setLang={setLanguage} languageLabels={languageLabels} />;
+  }
 
   return (
     <div className="app-shell">
@@ -212,183 +283,239 @@ export default function App() {
               <option key={key} value={key}>{label}</option>
             ))}
           </select>
-          <button className="primary-btn">{t.login}</button>
-          <button className="secondary-btn">{t.register}</button>
+          {user && <button className="primary-btn" onClick={handleLogout}>{t.logout}</button>}
         </div>
       </header>
 
-      <main className="hero">
-        <div className="hero-copy">
-          <span className="eyebrow">AI Accounting Platform</span>
-          <h1>Solve AI</h1>
-          <p>{t.tagline}</p>
-          <div className="cta-row">
-            <button className="primary-btn">{t.start}</button>
-            <button className="secondary-btn">{t.demo}</button>
-          </div>
-        </div>
-
-        <div className="hero-card">
-          <div className="kpi-grid">
-            <div className="stat-box">
-              <span>{t.revenue}</span>
-              <strong>{dashboard?.kpis.revenue ?? '$148.5K'}</strong>
+      {user && (
+        <main className="dashboard">
+          <section className="section-block">
+            <div className="section-heading">
+              <h2>Welcome, {user.name}!</h2>
+              <p>Plan: {user.plan}</p>
             </div>
-            <div className="stat-box">
-              <span>{t.expenses}</span>
-              <strong>{dashboard?.kpis.expenses ?? '$67.2K'}</strong>
+          </section>
+
+          <section className="section-block">
+            <div className="section-heading">
+              <h2>{t.overview}</h2>
             </div>
-            <div className="stat-box">
-              <span>{t.netProfit}</span>
-              <strong>{dashboard?.kpis.netProfit ?? '$81.3K'}</strong>
+            <div className="summary-grid">
+              <div className="summary-card">
+                <span>{t.revenue}</span>
+                <strong>${dashboard?.totalRevenue || 0}</strong>
+              </div>
+              <div className="summary-card">
+                <span>{t.expenses}</span>
+                <strong>${dashboard?.totalExpenses || 0}</strong>
+              </div>
+              <div className="summary-card">
+                <span>{t.netProfit}</span>
+                <strong>${dashboard?.netProfit || 0}</strong>
+              </div>
+              <div className="summary-card">
+                <span>{t.activeClients}</span>
+                <strong>{dashboard?.activeClients || 0}</strong>
+              </div>
             </div>
-            <div className="stat-box accent">
-              <span>{t.aiInsights}</span>
-              <strong>{dashboard?.kpis.aiInsights ?? 32}</strong>
+          </section>
+
+          <section className="section-block">
+            <div className="section-heading">
+              <h2>{t.invoices}</h2>
             </div>
-          </div>
-        </div>
-      </main>
-
-      <section className="section-block">
-        <div className="section-heading">
-          <h2>{t.overview}</h2>
-        </div>
-        <div className="summary-grid">
-          <div className="summary-card">
-            <span>{t.activeClients}</span>
-            <strong>{dashboard?.kpis.activeClients ?? 486}</strong>
-          </div>
-          <div className="summary-card">
-            <span>{t.invoicesPaid}</span>
-            <strong>{dashboard?.kpis.invoicesPaid ?? 94}%</strong>
-          </div>
-          <div className="summary-card">
-            <span>Cash Flow</span>
-            <strong>{dashboard?.summary.cashFlow ?? '+12.4%'}</strong>
-          </div>
-          <div className="summary-card">
-            <span>Forecast</span>
-            <strong>{dashboard?.summary.forecast ?? '$210K'}</strong>
-          </div>
-        </div>
-      </section>
-
-      <section className="section-block double">
-        <div className="panel-card">
-          <div className="mini-header">
-            <h3>{t.aiTitle}</h3>
-          </div>
-          <p>{t.aiDesc}</p>
-          <div className="ai-box">
-            <textarea
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              rows={4}
-            />
-            <button className="primary-btn" onClick={askAi}>{t.askAi}</button>
-          </div>
-          <div className="ai-output">{aiResponse || t.noData}</div>
-        </div>
-
-        <div className="panel-card">
-          <div className="mini-header">
-            <h3>{t.reports}</h3>
-          </div>
-          <ul className="list">
-            {reports.length > 0 ? (
-              reports.map((report) => (
-                <li key={report.title}>
-                  <span>{report.title}</span>
-                  <strong>{report.value}</strong>
-                </li>
-              ))
-            ) : (
-              <li><span>{t.noData}</span></li>
-            )}
-          </ul>
-        </div>
-      </section>
-
-      <section className="section-block">
-        <div className="section-heading">
-          <h2>{t.invoices}</h2>
-        </div>
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Client</th>
-                <th>Value</th>
-                <th>Status</th>
-                <th>Due</th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoices.length > 0 ? (
-                invoices.map((invoice) => (
-                  <tr key={invoice.id}>
-                    <td>{invoice.id}</td>
-                    <td>{invoice.client}</td>
-                    <td>{invoice.value}</td>
-                    <td>{invoice.status}</td>
-                    <td>{invoice.due}</td>
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Number</th>
+                    <th>Customer</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
                   </tr>
+                </thead>
+                <tbody>
+                  {invoices.length > 0 ? (
+                    invoices.map((inv) => (
+                      <tr key={inv.id}>
+                        <td>{inv.invoice_number}</td>
+                        <td>{inv.customer_name}</td>
+                        <td>${inv.amount}</td>
+                        <td>{inv.status}</td>
+                        <td>{inv.due_date || '-'}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr><td colSpan={5}>{t.noData}</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section className="section-block">
+            <div className="section-heading">
+              <h2>{t.customers}</h2>
+            </div>
+            <div className="cards-grid">
+              {customers.length > 0 ? (
+                customers.map((cust) => (
+                  <div className="info-card" key={cust.id}>
+                    <h4>{cust.name}</h4>
+                    <p>{cust.type}</p>
+                    <strong>${cust.balance}</strong>
+                    <span>{cust.status}</span>
+                  </div>
                 ))
               ) : (
-                <tr><td colSpan={5}>{t.noData}</td></tr>
+                <div className="info-card"><h4>{t.noData}</h4></div>
               )}
-            </tbody>
-          </table>
-        </div>
-      </section>
+            </div>
+          </section>
 
-      <section className="section-block">
-        <div className="section-heading">
-          <h2>{t.customers}</h2>
-        </div>
-        <div className="cards-grid">
-          {customers.length > 0 ? (
-            customers.map((customer) => (
-              <div className="info-card" key={customer.name}>
-                <h4>{customer.name}</h4>
-                <p>{customer.type}</p>
-                <strong>{customer.balance}</strong>
-                <span>{customer.status}</span>
-              </div>
-            ))
-          ) : (
-            <div className="info-card"><h4>{t.noData}</h4></div>
-          )}
-        </div>
-      </section>
+          <section className="section-block pricing-block">
+            <div className="section-heading">
+              <h2>{t.plans}</h2>
+            </div>
+            <div className="pricing-grid">
+              {plans.length > 0 ? (
+                plans.map((plan) => (
+                  <article key={plan.name} className={`plan-card ${plan.popular ? 'popular' : ''}`}>
+                    {plan.popular && <span className="badge">Popular</span>}
+                    <h3>{plan.name}</h3>
+                    <div className="price">{plan.price}</div>
+                    <p>{plan.description}</p>
+                    <ul>
+                      {plan.features.map((feature) => (
+                        <li key={feature}>{feature}</li>
+                      ))}
+                    </ul>
+                    <button className="primary-btn">Upgrade</button>
+                  </article>
+                ))
+              ) : (
+                <div className="info-card"><h4>{t.noData}</h4></div>
+              )}
+            </div>
+          </section>
+        </main>
+      )}
+    </div>
+  );
+}
 
-      <section className="section-block pricing-block">
-        <div className="section-heading">
-          <h2>{t.plans}</h2>
+function LoginForm({ t, onLogin, onSwitch, loading, error, lang, setLang, languageLabels }: any) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    onLogin(email, password);
+  };
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="brand">
+          <div className="brand-mark">S</div>
+          <span>{t.brand}</span>
         </div>
-        <div className="pricing-grid">
-          {plans.length > 0 ? (
-            plans.map((plan) => (
-              <article key={plan.name} className={`plan-card ${plan.popular ? 'popular' : ''}`}>
-                {plan.popular && <span className="badge">Popular</span>}
-                <h3>{plan.name}</h3>
-                <div className="price">{plan.price}</div>
-                <p>{plan.description}</p>
-                <ul>
-                  {plan.features.map((feature) => (
-                    <li key={feature}>{feature}</li>
-                  ))}
-                </ul>
-                <button className="primary-btn">{t.choosePlan}</button>
-              </article>
-            ))
-          ) : (
-            <div className="info-card"><h4>{t.noData}</h4></div>
-          )}
+        <h2>{t.login}</h2>
+        {error && <div className="error-message">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder={t.email}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder={t.password}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit" className="primary-btn" disabled={loading}>
+            {loading ? 'Loading...' : t.login}
+          </button>
+        </form>
+        <p>
+          {t.name}? <button onClick={onSwitch} className="link-btn">{t.register}</button>
+        </p>
+        <select value={lang} onChange={(e) => setLang(e.target.value)}>
+          {Object.entries(languageLabels).map(([key, label]) => (
+            <option key={key} value={key}>{label}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+}
+
+function RegisterForm({ t, onRegister, onSwitch, loading, error, lang, setLang, languageLabels }: any) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [companyName, setCompanyName] = useState('');
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    onRegister(name, email, password, companyName);
+  };
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="brand">
+          <div className="brand-mark">S</div>
+          <span>{t.brand}</span>
         </div>
-      </section>
+        <h2>{t.register}</h2>
+        {error && <div className="error-message">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder={t.name}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <input
+            type="text"
+            placeholder={t.company}
+            value={companyName}
+            onChange={(e) => setCompanyName(e.target.value)}
+          />
+          <input
+            type="email"
+            placeholder={t.email}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder={t.password}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit" className="primary-btn" disabled={loading}>
+            {loading ? 'Loading...' : t.register}
+          </button>
+        </form>
+        <p>
+          {t.login}? <button onClick={onSwitch} className="link-btn">{t.login}</button>
+        </p>
+        <select value={lang} onChange={(e) => setLang(e.target.value)}>
+          {Object.entries(languageLabels).map(([key, label]) => (
+            <option key={key} value={key}>{label}</option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 }
