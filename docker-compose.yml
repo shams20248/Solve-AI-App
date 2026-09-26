@@ -14,28 +14,38 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - solve-ai-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U solve_ai_user']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   server:
     build:
-      context: ./apps/server
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/server/Dockerfile
     container_name: solve-ai-server
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       DATABASE_URL: postgres://solve_ai_user:solve_ai_password_123@postgres:5432/solve_ai_db
       JWT_SECRET: your-secret-key-change-in-production
       PORT: 4000
       CLIENT_URL: http://localhost:5173
+      NODE_ENV: production
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_dummy}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_test}
     ports:
       - '4000:4000'
     networks:
       - solve-ai-network
+    restart: on-failure
 
   web:
     build:
-      context: ./apps/web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/web/Dockerfile
     container_name: solve-ai-web
     ports:
       - '5173:5173'
@@ -43,6 +53,7 @@ services:
       VITE_API_URL: http://localhost:4000
     networks:
       - solve-ai-network
+    restart: on-failure
 
 volumes:
   postgres_data:

@@ -1,12 +1,13 @@
 {
   "name": "@solve-ai/server",
   "private": true,
-  "version": "0.2.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.ts",
+    "lint": "eslint src --ext .ts"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -15,7 +16,11 @@
     "postgres": "^3.4.4",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.1.2",
-    "stripe": "^14.0.0"
+    "stripe": "^14.0.0",
+    "helmet": "^7.1.0",
+    "compression": "^1.7.4",
+    "express-rate-limit": "^7.1.5",
+    "express-mongo-sanitize": "^2.2.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.5",
@@ -23,6 +28,7 @@
     "@types/node": "^22.10.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.7",
+    "@types/compression": "^1.7.5",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
