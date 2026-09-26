@@ -1,0 +1,15 @@
+{
+  "name": "solve-ai-app",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "npm --workspace apps/web run dev",
+    "dev:server": "npm --workspace apps/server run dev",
+    "build": "npm --workspace apps/web run build && npm --workspace apps/server run build",
+    "start:web": "npm --workspace apps/web run preview -- --host 0.0.0.0",
+    "start:server": "npm --workspace apps/server run start"
+  }
+}
